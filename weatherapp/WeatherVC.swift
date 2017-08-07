@@ -19,7 +19,7 @@ class WeatherVC: UIViewController, UITableViewDelegate, UITableViewDataSource, C
     @IBOutlet weak var currentTempLbl: UILabel!
     @IBOutlet weak var dateLbl: UILabel!
     
-    let locationManager = CLLocationManager()
+    var locationManager = CLLocationManager()
     var currentLocation: CLLocation!
     
     var weather: Weather!
@@ -29,6 +29,7 @@ class WeatherVC: UIViewController, UITableViewDelegate, UITableViewDataSource, C
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -49,10 +50,13 @@ class WeatherVC: UIViewController, UITableViewDelegate, UITableViewDataSource, C
     override func viewDidAppear(_ animated: Bool) {
         
         super.viewDidAppear(animated)
+        //locationManager = CLLocationManager()
+
         checkIfLocationAuthorize()
     }
     
     func checkIfLocationAuthorize() {
+         //locationManager = CLLocationManager()
         
         if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
                 // get location then get cordinates 
