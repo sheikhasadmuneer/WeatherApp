@@ -84,7 +84,9 @@ class Weather{
                                 
                                 let celciusTemperature = Double(currentTemperature - 273.15)
                                 
-                                self._currentTemp =   (String(format: "%.2f", celciusTemperature))+"°"
+                                //self._currentTemp =   (String(format: "%.2f", celciusTemperature))+"°"
+                                
+                                self._currentTemp =   "\(abs(round(celciusTemperature)))°"
                                 
                             }
                         }
