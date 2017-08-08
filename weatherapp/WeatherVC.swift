@@ -30,7 +30,6 @@ class WeatherVC: UIViewController, UITableViewDelegate, UITableViewDataSource, C
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
@@ -38,8 +37,10 @@ class WeatherVC: UIViewController, UITableViewDelegate, UITableViewDataSource, C
         
         tableView.delegate = self
         tableView.dataSource = self
-        
+        self.tableView.addSubview(self.refreshControl)
+        //self.view.backgroundColor = UIColor.white
         weather = Weather()
+        
      
         
     }
@@ -54,6 +55,31 @@ class WeatherVC: UIViewController, UITableViewDelegate, UITableViewDataSource, C
 
         checkIfLocationAuthorize()
     }
+    
+    
+    lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(WeatherVC.handleRefresh(_:)), for: UIControlEvents.valueChanged)
+        refreshControl.tintColor = UIColor.red
+        
+        return refreshControl
+    }()
+    
+    func handleRefresh(_ refreshControl: UIRefreshControl) {
+        // Do some reloading of data and update the table view's data source
+        
+        weather.downloadWeatherData {
+            
+            self.downloadForecastData {
+                self.updateUI()
+            }
+            
+        }
+        
+        //self.tableView.reloadData()
+        refreshControl.endRefreshing()
+    }
+    
     
     func checkIfLocationAuthorize() {
          //locationManager = CLLocationManager()
@@ -72,9 +98,7 @@ class WeatherVC: UIViewController, UITableViewDelegate, UITableViewDataSource, C
                     self.updateUI()
                 }
                 
-                
             }
-            
             
         } else {
             
@@ -103,12 +127,17 @@ class WeatherVC: UIViewController, UITableViewDelegate, UITableViewDataSource, C
                     
                     if let list = dict["list"] as? [Dictionary<String, AnyObject>] {
                         
+                        if self.forecastsArary.count > 0 {
+                            self.forecastsArary.removeAll()
+                        }
+                        
                         for obj in list {
                             let forecast = Forecast(weatherForecastDict: obj)
+                            
                                 self.forecastsArary.append(forecast)
                             
                         }
-                        self.forecastsArary.remove(at: 0) // removes today's date from array
+                        //self.forecastsArary.remove(at: 0) // removes today's date from array
                         self.tableView.reloadData()       // to reload data in tableView
                     }
                     complete()
